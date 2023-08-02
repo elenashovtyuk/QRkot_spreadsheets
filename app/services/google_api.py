@@ -25,6 +25,7 @@ async def spreadsheets_create(wrapper_services: Aiogoogle) -> str:
     spreadsheetid = response['spreadsheetId']
     return spreadsheetid
 
+
 async def set_user_permissions(
     spreadsheetid: str,
     wrapper_services: Aiogoogle
@@ -61,7 +62,7 @@ async def spreadsheets_update_value(
         'majorDimension': 'ROWS',
         'values': table_values
     }
-    response = await wrapper_services.as_service_account(
+    await wrapper_services.as_service_account(
         service.spreadsheets.values.update(
             spreadsheetId=spreadsheetid,
             range='A1:E30',
