@@ -1,16 +1,20 @@
 from app.crud.base import CRUDBase
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.charity_projects import CharityProject
+from app.models.charity_project import CharityProject
 from typing import Optional
 from sqlalchemy import select
+from typing import List
 
 
 class CRUDCharityProject(CRUDBase):
+    """Расширенный CRUD-класс для проектов пожертвований."""
+
     async def get_charity_project_id_by_name(
         self,
         charity_project_name: str,
         session: AsyncSession
     ) -> Optional[int]:
+        """Поиск id проекта по названию."""
         charity_project_id = await session.execute(
             select(
                 CharityProject.id
@@ -21,9 +25,7 @@ class CRUDCharityProject(CRUDBase):
         return charity_project_id.scalars().first()
 
     async def get_projects_by_completion_rate(
-        self,
-        session: AsyncSession
-    ) -> list[CharityProject]:
+            self, session: AsyncSession) -> List:
         """
         Метод, который отсортирует список со всеми
         закрытыми проектами пожертвований.

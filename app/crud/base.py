@@ -1,16 +1,14 @@
 from typing import Optional
+
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models import User
 
 
-# базовый crud-класс, в котором будут реализованы все основные функции
-# далее этот класс можно расширять
 class CRUDBase:
-    # при инициализации класса аттрибуту self.model будет присвоена
-    # конкретная модель и далее все методы будут работать
-    # именно с этой моделью
+    """Базовый CRUD-класс."""
     def __init__(self, model):
         self.model = model
 
@@ -33,18 +31,14 @@ class CRUDBase:
         db_objs = await session.execute(select(self.model))
         return db_objs.scalars().all()
 
-    # создать новый объект
     async def create(
             self,
             obj_in,
             session: AsyncSession,
-            # добавим опциональный параметр user
             user: Optional[User] = None
     ):
         obj_in_data = obj_in.dict()
-        # если пользователь был передан, то
         if user:
-            # то дополнить словарь для создания модели
             obj_in_data['user_id'] = user.id
         db_obj = self.model(**obj_in_data)
 

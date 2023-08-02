@@ -1,24 +1,20 @@
-# импортируем базовый CRUD-класс, чтобы для модели Donation
-# можно было использовать CRUD-методы базового класса
-from app.crud.base import CRUDBase
-from typing import List
-# импортируем модель Donation
-from app.models import Donation, User
-from typing import Optional
+from typing import List, Optional
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.crud.base import CRUDBase
+from app.models import Donation, User
 
-# наследуем класс от базового CRUDBase-класса
-# который включает в себя основные круд-функции
-# а также расширяем его, добавляем уникальную корутину
-# которая возвращает все пожертвования пользователя, выполнившего запрос
+
 class CRUDDonation(CRUDBase):
+    """Расширенный CRUD-класс для пожертвований."""
     async def get_user_donations(
         self,
         session: AsyncSession,
         user: User
-    ) -> List[Optional[Donation]]:
+    ) -> Optional[List[Donation]]:
+        """Поиск пожертвования по его id."""
         reservations = await session.execute(
             select(Donation).where(Donation.user_id == user.id)
         )

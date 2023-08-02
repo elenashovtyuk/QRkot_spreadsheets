@@ -1,14 +1,14 @@
-# app/api/endpoints/user.py
-from fastapi import APIRouter, HTTPException
 from http import HTTPStatus
+
+from fastapi import APIRouter, HTTPException
+
+from app.constants import ERROR_USER_DELETE
 from app.core.user import auth_backend, fastapi_users
 from app.schemas.user import UserCreate, UserRead, UserUpdate
-from app.constants import ERROR_USER_DELETE
+
 router = APIRouter()
 
 router.include_router(
-    # В роутер аутентификации
-    # передается объект бэкенда аутентификации.
     fastapi_users.get_auth_router(auth_backend),
     prefix='/auth/jwt',
     tags=['auth'],
@@ -25,8 +25,6 @@ router.include_router(
 )
 
 
-# переопределим эндпоинт удаления пользователя
-# установми запрет на удаление пользователей
 @router.delete(
     '/users/{id}',
     tags=['users'],

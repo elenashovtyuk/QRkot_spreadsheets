@@ -1,11 +1,11 @@
 from fastapi import HTTPException
+from http import HTTPStatus
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud.charity_projects import charity_project_crud
+from app.crud.charity_project import charity_project_crud
 from app.models import CharityProject
 
 
-# код проверки вынесем в отдельную корутину в  файле валидаторов
 async def check_charity_project_exists(
         charity_project_id: int,
         session: AsyncSession,
@@ -16,13 +16,12 @@ async def check_charity_project_exists(
     charity_project = await charity_project_crud.get(charity_project_id, session)
     if charity_project is None:
         raise HTTPException(
-            status_code=404,
+            status_code=HTTPStatus.NOT_FOUND,
             detail='Проект не найден!'
         )
     return charity_project
 
 
-# еще одну проверку вынесем в отдельную корутину-валидатор
 async def check_name_duplicate(
         project_name: str,
         session: AsyncSession,
@@ -34,6 +33,49 @@ async def check_name_duplicate(
         project_name, session)
     if project_id:
         raise HTTPException(
-            status_code=422,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='Проект с таким именем уже существует!',
         )
+
+
+async def check_project_open(
+        project_id: int,
+        session: AsyncSession,
+) -> CharityProject:
+    """Проверка того, что проект еще открыт."""
+    charity_project = await charity_project_crud.get(project_id, session)
+    if charity_project.close_date:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Закрытый проект нельзя редактировать!',
+        )
+    return charity_project
+
+
+async def check_invested_amount(
+        project_id: int,
+        session: AsyncSession,
+) -> CharityProject:
+    """Проверка того, что в проект уже поступили некоторые средства."""
+    charity_project = await charity_project_crud.get(project_id, session)
+    if charity_project.invested_amount > 0:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='В проект были внесены средства, не подлежит удалению!',
+        )
+    return charity_project
+
+
+async def check_investing_funds(
+        project_id: int,
+        obj_in_full_amount,
+        session: AsyncSession,
+) -> CharityProject:
+    """Проверка новой требуемой суммы."""
+    charity_project = await charity_project_crud.get(project_id, session)
+    if obj_in_full_amount < charity_project.invested_amount:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Требуемая сумма проекта не может быть меньше вложенной!',
+        )
+    return charity_project
