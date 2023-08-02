@@ -1,9 +1,10 @@
-from app.crud.base import CRUDBase
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.charity_project import CharityProject
-from typing import Optional
+from typing import List, Optional
+
 from sqlalchemy import select
-from typing import List
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.crud.base import CRUDBase
+from app.models.charity_project import CharityProject
 
 
 class CRUDCharityProject(CRUDBase):

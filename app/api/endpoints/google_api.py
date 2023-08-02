@@ -1,8 +1,5 @@
-# в этом файле будет написана "ручка", которая будет
-# запускать процесс сбора информации из базы данных
-# и формирования отчета
 from typing import List
-# Класс «обёртки»
+
 from aiogoogle import Aiogoogle
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,21 +7,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import get_async_session
 from app.core.google_client import get_service
 from app.core.user import current_superuser
-
 from app.crud.charity_project import charity_project_crud
-# импортируем наши 3 функции для создания документа, выдачи прав и наполнения
-from app.services.google_api import (
-    set_user_permissions,
-    spreadsheets_create,
-    spreadsheets_update_value
-)
+from app.services.google_api import (set_user_permissions, spreadsheets_create,
+                                     spreadsheets_update_value)
 
-# Создаём экземпляр класса APIRouter
+
 router = APIRouter()
 
 
-# функция get_report будет обрабатывать запрос отправленный методом GET
-# эта функция должна принимать
 @router.get(
     '/', response_model=List[dict],
     dependencies=[Depends(current_superuser)])

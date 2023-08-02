@@ -1,19 +1,14 @@
-# в этом файле будем настраивать получение и обработку учетных данных
-# сервисного аккаунта из секретов
-# подключаем классы асинхронной библиотеки
 from aiogoogle import Aiogoogle
 from aiogoogle.auth.creds import ServiceAccountCreds
 
-# подключаем настройки
 from app.core.config import settings
 
-# список разрешений
 SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets',
     'https://www.googleapis.com/auth/drive'
 ]
 
-# формируем словарь с учетными данными сервисного аккаунта
+
 INFO = {
     'type': settings.type,
     'project_id': settings.project_id,
@@ -27,14 +22,9 @@ INFO = {
     'client_x509_cert_url': settings.client_x509_cert_url
 }
 
-# получаем объект учетных данных
 cred = ServiceAccountCreds(scopes=SCOPES, **INFO)
 
 
-# создаем экземпляр класса Aiogoogle
 async def get_service():
     async with Aiogoogle(service_account_creds=cred) as aiogoogle:
         yield aiogoogle
-
-# всех этих настроек будет достаточно, чтобы добавить в приложение
-# возможность работы с Google API
