@@ -4,7 +4,10 @@ from aiogoogle import Aiogoogle
 
 from app.core.config import settings
 
-FORMAT = "%Y/%m/%d %H:%M:%S"
+from app.constants import (
+    FORMAT,
+    SERVICE_VERSION_FOR_AUTH,
+    SERVICE_VERSION_FOR_UPDATE)
 
 
 async def spreadsheets_create(wrapper_services: Aiogoogle) -> str:
@@ -33,7 +36,7 @@ async def set_user_permissions(
     permission_body = {'type': 'user',
                        'role': 'writer',
                        'emailAddress': settings.email}
-    service = await wrapper_services.discover('driver', 'v3')
+    service = await wrapper_services.discover('driver', SERVICE_VERSION_FOR_AUTH)
 
     await wrapper_services.as_service_account(
         service.permissions.create(
@@ -49,7 +52,7 @@ async def spreadsheets_update_value(
     wrapper_services: Aiogoogle
 ) -> None:
     now_date_time = datetime.now().strftime(FORMAT)
-    service = await wrapper_services.discover('sheets', 'v4')
+    service = await wrapper_services.discover('sheets', SERVICE_VERSION_FOR_UPDATE)
     table_values = [
         ['Отчет от', now_date_time],
         ['Топ проектов по скорости закрытия'],

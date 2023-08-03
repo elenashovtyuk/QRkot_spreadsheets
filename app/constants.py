@@ -3,3 +3,6 @@ ERROR_USER_DELETE = 'Не используйте удаление, деакти�
 MIN_LENGTH = 1
 MAX_LENGTH = 100
 LIFITIME_SECONDS = 3600
+FORMAT = "%Y/%m/%d %H:%M:%S"
+SERVICE_VERSION_FOR_UPDATE = 'v4'
+SERVICE_VERSION_FOR_AUTH = 'v3'
